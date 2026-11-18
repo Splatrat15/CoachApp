@@ -161,11 +161,31 @@ The app config stub lives at `src/config/api.ts`.
 
 | Problem | Fix |
 |---------|-----|
-| `Missing MONGODB_URI` | Create `server/.env` from `server/.env.example` |
+| `Missing MONGODB_URI` | Create `server/.env` from `server/.env.example` (must live in **`server/.env`**, not the project root) |
+| `Missing MONGODB_URI` but file exists | Re-run after pulling latest code (env path fix), or restart the terminal |
+| `querySrv ECONNREFUSED` | Node DNS issue on Windows — fixed in code; if it persists see **SRV connection errors** below |
 | Authentication failed | Check username/password in the URI |
 | `IP not whitelisted` | Add your IP (or `0.0.0.0/0`) in Atlas Network Access |
 | Phone can’t reach API | Use LAN IP in `EXPO_PUBLIC_API_URL`, same Wi‑Fi as PC |
 | Port in use | Change `PORT` in `server/.env` |
+
+### SRV connection errors (`querySrv ECONNREFUSED`)
+
+Atlas connection strings often start with `mongodb+srv://`. That requires a DNS **SRV** lookup. Some networks block it.
+
+**Option A — Fix DNS (quick try)**
+
+1. Turn off VPN
+2. Windows → Network → your Wi‑Fi → DNS → set **8.8.8.8** and **8.8.4.4**
+3. Run `npm run server:db:test` again
+
+**Option B — Use the standard connection string (most reliable)**
+
+1. Atlas → **Database** → **Connect** → **Drivers**
+2. Look for **"standard connection string"** or expand advanced options
+3. Copy the URI that starts with `mongodb://` (not `mongodb+srv://`)
+4. Replace `MONGODB_URI` in `server/.env` with that full string (include `/coachapp` before `?`)
+5. Run `npm run server:db:test` again
 
 ---
 
